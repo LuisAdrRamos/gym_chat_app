@@ -24,4 +24,12 @@ export interface IRoutineRepository {
     findByTrainer(entrenador_id: string): Promise<Routine[]>;
 
     // (Podríamos añadir 'update', 'delete', 'findById' aquí después)
+
+    /**
+     * Actualiza la URL del video de una rutina específica.
+     * @param routineId - El ID de la rutina a actualizar.
+     * @param videoUrl - La nueva URL del video.
+     * @returns La rutina actualizada.
+   */
+    updateVideoUrl(routineId: number, videoUrl: string): Promise<Routine>;
 }

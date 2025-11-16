@@ -97,4 +97,17 @@ export const tabsStyles = StyleSheet.create({
         height: 50, // Requerido en iOS
         width: '100%',
     },
+    // Estilos para el estado del video en TrainerDashboard ---
+    index_videoLink: {
+        color: 'green',
+        fontStyle: 'italic',
+        fontSize: 12,
+        marginTop: 4,
+    },
+    index_videoUploading: {
+        color: '#007AFF',
+        fontStyle: 'italic',
+        fontSize: 12,
+        marginTop: 4,
+    }
 });

@@ -6,9 +6,7 @@ import {
     IRoutineRepository
 } from "../../domain/repositories/IRoutineRepository";
 
-// Esta es la implementación concreta del Repositorio
 export class SupabaseRoutineRepository implements IRoutineRepository {
-
     /**
      * Implementación del método 'create' usando Supabase
      */
@@ -53,5 +51,23 @@ export class SupabaseRoutineRepository implements IRoutineRepository {
         }
 
         return routines || [];
+    }
+
+    async updateVideoUrl(routineId: number, videoUrl: string): Promise<Routine> {
+        const { data: updatedRoutine, error } = await supabase
+            .from('rutinas')
+            .update({ video_url: videoUrl }) // Actualiza solo la columna video_url
+            .eq('id', routineId) // Donde el ID coincida
+            .select() // Devuelve el registro actualizado
+            .single();
+
+        if (error) {
+            console.error("Error updating routine video_url:", error.message);
+            throw new Error(`Error al actualizar la rutina: ${error.message}`);
+        }
+        if (!updatedRoutine) {
+            throw new Error("No se recibió la rutina actualizada.");
+        }
+        return updatedRoutine as Routine;
     }
 }
