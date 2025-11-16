@@ -3,10 +3,11 @@
 import { supabase } from "@/src/config/supabaseCliente";
 import { Session, User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
+import { UserRole } from "../../domain/entities/User";
 
 
 // Definimos los tipos para nuestro contexto de autenticación
-type UserRole = "Entrenador" | "Cliente";
+// type UserRole = "Entrenador" | "Cliente";
 
 interface AuthContextType {
     session: Session | null;
