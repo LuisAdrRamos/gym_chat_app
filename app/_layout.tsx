@@ -1,41 +1,37 @@
 // app/_layout.tsx
 import React, { useEffect } from 'react';
-import { Slot, useRouter, useSegments } from 'expo-router';
-import { AuthProvider, useAuth } from '../src/presentation/context/AuthContext';
+import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
+// --- 1. MODIFICA ESTA LÍNEA ---
+// Añade 'useAuth' a la importación
+import { AuthContext, useAuth } from '../src/presentation/context/AuthContext';
+import { useAuthProvider } from '../src/presentation/hooks/useAuthProvider';
 import { ActivityIndicator, View } from 'react-native';
 
-// Este componente está DENTRO del provider, por lo que puede usar useAuth()
-function InitialLayout() {
+// Esta función es el "Consumidor" del hook
+function RootLayoutNav() {
+    // --- 2. Esta línea ahora funcionará ---
     const { session, loading } = useAuth();
+
     const router = useRouter();
-    const segments = useSegments(); // Obtiene la ruta actual (ej: ['(auth)', 'login'])
+    const segments = useSegments();
+    const navigationState = useRootNavigationState();
 
     useEffect(() => {
-        // 1. Si está cargando, no hacemos nada (se muestra el spinner)
-        if (loading) {
+        if (loading || !navigationState?.key) {
             return;
         }
-
-        // 2. Verificamos si estamos en una pantalla de autenticación
         const inAuthGroup = segments[0] === '(auth)';
 
-        // 3. Lógica de redirección
-
-        // Si NO hay sesión y NO estamos en el grupo (auth),
-        // redirigir al login.
         if (!session && !inAuthGroup) {
-            router.replace('/(auth)/login');
+            router.replace('/login');
         }
-        // Si HAY sesión y ESTAMOS en el grupo (auth) (ej: en la pantalla de login)
-        // redirigir a la app principal (que será /tabs).
         else if (session && inAuthGroup) {
-            router.replace('/(tabs)'); // (Aún no existe, pero lo crearemos)
+            router.replace('/');
         }
+    }, [session, loading, segments, router, navigationState?.key]);
 
-    }, [session, loading, segments, router]); // Se re-ejecuta cuando cambian estos valores
-
-    // Mientras carga la sesión, mostramos un spinner
-    if (loading) {
+    // Spinner mientras carga
+    if (loading || !navigationState?.key) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#007AFF" />
@@ -43,16 +39,22 @@ function InitialLayout() {
         );
     }
 
-    // Si no está cargando, renderiza la pantalla actual
-    return <Slot />;
+    // El Stack explícito
+    return (
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+        </Stack>
+    );
 }
 
-// Layout Raíz (Wrapper principal)
+// El export principal ahora es el PROVIDER
 export default function RootLayout() {
+    const authLogic = useAuthProvider();
+
     return (
-        // Envolvemos toda la app con nuestro AuthProvider
-        <AuthProvider>
-            <InitialLayout />
-        </AuthProvider>
+        <AuthContext.Provider value={authLogic}>
+            <RootLayoutNav />
+        </AuthContext.Provider>
     );
 }

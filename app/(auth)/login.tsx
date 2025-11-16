@@ -1,30 +1,23 @@
 // app/(auth)/login.tsx
-import { Link, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, Button, Text, TextInput, View } from 'react-native';
-import { supabase } from '../../src/config/supabaseCliente';
-import { authStyles } from '../../src/presentation/styles/authStyles'; // <-- Importar
+import React from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+import { Link } from 'expo-router';
+import { authStyles } from '../../src/presentation/styles/authStyles';
+// --- 1. Importamos el nuevo hook de lógica ---
+import { useLogin } from '../../src/presentation/hooks/useLogin';
 
 export default function LoginScreen() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+    // --- 2. Consumimos el hook ---
+    const {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        loading,
+        handleLogin,
+    } = useLogin();
 
-    const handleLogin = async () => {
-        setLoading(true);
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-
-        if (error) {
-            Alert.alert('Error', error.message);
-        }
-        // No es necesario redirigir, el layout raíz lo hará
-        setLoading(false);
-    };
-
+    // --- 3. El JSX se mantiene casi idéntico ---
     return (
         <View style={authStyles.container}>
             <Text style={authStyles.title}>Iniciar Sesión</Text>
@@ -46,14 +39,17 @@ export default function LoginScreen() {
                 secureTextEntry
             />
 
-            <Button title={loading ? 'Iniciando...' : 'Iniciar Sesión'} onPress={handleLogin} disabled={loading} />
-            
-            <Link href="/(auth)/forgot-password" style={[authStyles.link, { marginTop: 10 }]}>
-                ¿Olvidaste tu contraseña?
-            </Link>
+            <Button
+                title={loading ? 'Iniciando...' : 'Iniciar Sesión'}
+                onPress={handleLogin}
+                disabled={loading}
+            />
 
             <Link href="/(auth)/register" style={authStyles.link}>
                 ¿No tienes cuenta? Regístrate
+            </Link>
+            <Link href="/(auth)/forgot-password" style={[authStyles.link, { marginTop: 10 }]}>
+                ¿Olvidaste tu contraseña?
             </Link>
         </View>
     );

@@ -1,45 +1,25 @@
 // app/(auth)/register.tsx
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, Button, Pressable, Text, TextInput, View } from 'react-native';
-import { supabase } from '../../src/config/supabaseCliente';
+import React from 'react';
+import { View, Text, TextInput, Button, Pressable } from 'react-native';
 import { authStyles } from '../../src/presentation/styles/authStyles';
-import { UserRole } from '../../src/domain/entities/User';
+import { UserRole } from '../../src/domain/entities/User'; // <-- Este tipo aún lo necesita la UI
+// --- 1. Importamos el nuevo hook de lógica ---
+import { useRegister } from '../../src/presentation/hooks/useRegister';
 
 export default function RegisterScreen() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState<UserRole>('Usuario');
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+    // --- 2. Consumimos el hook ---
+    const {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        role,
+        setRole,
+        loading,
+        handleRegister,
+    } = useRegister();
 
-    const handleRegister = async () => {
-        // ... (la lógica de handleRegister sigue igual) ...
-        if (!role) {
-            Alert.alert('Error', 'Por favor, selecciona un rol.');
-            return;
-        }
-
-        setLoading(true);
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    role: role,
-                },
-            },
-        });
-
-        if (error) {
-            Alert.alert('Error', error.message);
-        } else {
-            Alert.alert('Éxito', '¡Registro exitoso! Revisa tu email para confirmar.');
-            router.push('/(auth)/login');
-        }
-        setLoading(false);
-    };
-
+    // --- 3. El JSX se mantiene idéntico ---
     return (
         <View style={authStyles.container}>
             <Text style={authStyles.title}>Crear Cuenta</Text>
@@ -75,7 +55,11 @@ export default function RegisterScreen() {
                 </Pressable>
             </View>
 
-            <Button title={loading ? 'Registrando...' : 'Crear Cuenta'} onPress={handleRegister} disabled={loading} />
+            <Button
+                title={loading ? 'Registrando...' : 'Crear Cuenta'}
+                onPress={handleRegister}
+                disabled={loading}
+            />
         </View>
     );
 }

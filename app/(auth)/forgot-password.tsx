@@ -1,33 +1,23 @@
 // app/(auth)/forgot-password.tsx
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { supabase } from '../../src/config/supabaseCliente';
+import React from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
 import { authStyles } from '../../src/presentation/styles/authStyles';
+// --- 1. Importamos el nuevo hook de lógica ---
+import { useForgotPassword } from '../../src/presentation/hooks/useForgotPassword';
 
 export default function ForgotPasswordScreen() {
-    const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
+    // --- 2. Consumimos el hook ---
+    const {
+        email,
+        setEmail,
+        loading,
+        handlePasswordReset,
+    } = useForgotPassword();
 
-    const handlePasswordReset = async () => {
-        setLoading(true);
-        // Esta es la función clave de Supabase
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-
-        setLoading(false);
-
-        if (error) {
-            Alert.alert('Error', error.message);
-        } else {
-            Alert.alert('Éxito', 'Revisa tu bandeja de entrada para las instrucciones.');
-            router.back(); // Regresa al login
-        }
-    };
-
+    // --- 3. El JSX se mantiene idéntico ---
     return (
-        <View style={authStyles.container}>
-            <Text style={authStyles.title}>Recuperar Contraseña</Text>
+        < View style={authStyles.container} >
+            < Text style={authStyles.title} > Recuperar Contraseña</Text >
             <Text style={{ textAlign: 'center', marginBottom: 20 }}>
                 Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.
             </Text>
@@ -46,6 +36,6 @@ export default function ForgotPasswordScreen() {
                 onPress={handlePasswordReset}
                 disabled={loading}
             />
-        </View>
+        </View >
     );
 }
