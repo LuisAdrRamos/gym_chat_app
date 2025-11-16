@@ -2,7 +2,7 @@
 import { StyleSheet } from 'react-native';
 
 export const tabsStyles = StyleSheet.create({
-    // Estilos de app/(tabs)/index.tsx ---
+    // --- Estilos de app/(tabs)/index.tsx ---
     index_centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     index_container: { flex: 1, padding: 20 },
     index_title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center' },
@@ -57,17 +57,13 @@ export const tabsStyles = StyleSheet.create({
     },
     index_planName: { fontWeight: 'bold', fontSize: 16, color: '#005699' },
 
-    // Estilos de app/(tabs)/chat.tsx ---
-    chat_container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    chat_title: { fontSize: 20, fontWeight: 'bold' },
-
-    // Estilos de app/(tabs)/profile.tsx ---
+    // --- Estilos de app/(tabs)/profile.tsx ---
     profile_container: { flex: 1, padding: 20, paddingTop: 40 },
     profile_title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
     profile_info: { fontSize: 18, marginBottom: 10 },
     profile_buttonContainer: { marginTop: 30 },
 
-    // Estilos de app/(tabs)/assign-plan.tsx ---
+    // --- Estilos de app/(tabs)/assign-plan.tsx ---
     assign_container: {
         flex: 1,
         padding: 20,
@@ -78,7 +74,7 @@ export const tabsStyles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 15,
         marginBottom: 5,
-        color: '#333'
+        color: '#333',
     },
     assign_routineName: {
         fontSize: 18,
@@ -91,14 +87,14 @@ export const tabsStyles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: '#fff',
-        justifyContent: 'center', // Centra el picker en Android
+        justifyContent: 'center',
     },
     assign_picker: {
-        height: 50, // Requerido en iOS
+        height: 50,
         width: '100%',
     },
 
-    // Estilos para el estado del video en TrainerDashboard ---
+    // --- Estilos de TrainerDashboard ---
     index_videoLink: {
         color: 'green',
         fontStyle: 'italic',
@@ -112,7 +108,7 @@ export const tabsStyles = StyleSheet.create({
         marginTop: 4,
     },
 
-    // Estilos para el Progreso del Usuario (UserDashboard) ---
+    // --- Estilos de UserDashboard ---
     user_progressImagePreview: {
         width: 100,
         height: 100,
@@ -146,4 +142,5 @@ export const tabsStyles = StyleSheet.create({
         color: 'gray',
         marginTop: 4,
     },
+    // ¡Se han quitado todos los estilos 'chat_'!
 });

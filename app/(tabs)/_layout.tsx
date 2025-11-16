@@ -1,27 +1,28 @@
 // app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { FontAwesome, Ionicons } from '@expo/vector-icons'; // Usaremos estos íconos
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 export default function TabsLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: '#007AFF', // Un color activo
+                tabBarActiveTintColor: '#007AFF',
             }}
         >
+            {/* (Tabs.Screen para 'index', 'chat', 'profile' sin cambios) */}
             <Tabs.Screen
-                name="index" // Corresponde a index.tsx
+                name="index"
                 options={{
                     title: 'Inicio',
                     tabBarIcon: ({ color, size }) => (
                         <FontAwesome name="home" size={size} color={color} />
                     ),
-                    headerShown: false, // Ocultamos el header por defecto aquí
+                    headerShown: false,
                 }}
             />
             <Tabs.Screen
-                name="chat" // Corresponde a chat.tsx
+                name="chat" // <-- Esta es la lista de contactos
                 options={{
                     title: 'Chat',
                     tabBarIcon: ({ color, size }) => (
@@ -30,7 +31,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="profile" // Corresponde a profile.tsx
+                name="profile"
                 options={{
                     title: 'Perfil',
                     tabBarIcon: ({ color, size }) => (
@@ -39,14 +40,24 @@ export default function TabsLayout() {
                 }}
             />
 
-            {/* --- AÑADIR ESTA PANTALLA --- */}
-            {/* Esta pantalla pertenece al stack de (tabs) pero no es visible en el TabBar */}
+            {/* (Screen de 'assign-plan' sin cambios) */}
             <Tabs.Screen
-                name="assign-plan" // Corresponde a assign-plan.tsx
+                name="assign-plan"
                 options={{
                     title: 'Asignar Plan',
-                    href: null, // <-- ¡Esto la oculta del TabBar!
-                    headerShown: true, // Mostramos un header con botón de "atrás"
+                    href: null,
+                    headerShown: true,
+                }}
+            />
+
+            {/* --- AÑADIR ESTA PANTALLA --- */}
+            {/* Esta es la pantalla de conversación específica */}
+            <Tabs.Screen
+                name="chat/[receiver_id]" // Ruta dinámica
+                options={{
+                    title: 'Conversación',
+                    href: null, // Oculta del TabBar
+                    headerShown: true, // Muestra un header con botón de "atrás"
                 }}
             />
         </Tabs>
