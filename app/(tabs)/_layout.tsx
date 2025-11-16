@@ -38,6 +38,17 @@ export default function TabsLayout() {
                     ),
                 }}
             />
+
+            {/* --- AÑADIR ESTA PANTALLA --- */}
+            {/* Esta pantalla pertenece al stack de (tabs) pero no es visible en el TabBar */}
+            <Tabs.Screen
+                name="assign-plan" // Corresponde a assign-plan.tsx
+                options={{
+                    title: 'Asignar Plan',
+                    href: null, // <-- ¡Esto la oculta del TabBar!
+                    headerShown: true, // Mostramos un header con botón de "atrás"
+                }}
+            />
         </Tabs>
     );
 }
