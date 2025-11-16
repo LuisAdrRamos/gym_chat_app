@@ -5,9 +5,8 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useAuth } from '../../../src/presentation/context/AuthContext';
-// --- ¡NUEVAS RUTAS DE IMPORTACIÓN DE ESTILOS! ---
 import { chatStyles } from '../../../src/presentation/styles/chatStyles';
-import { authStyles } from '../../../src/presentation/styles/authStyles';
+import { authStyles } from '../../../src/presentation/styles/authStyles'; // Reusamos input style
 
 // Importaciones del Dominio y Datos del Chat
 import { Message } from '../../../src/domain/entities/Message';
@@ -25,13 +24,14 @@ export default function ConversationScreen() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
+    const [enviando, setEnviando] = useState(false); // Estado para el botón
 
     const otherUserId = Array.isArray(receiver_id) ? receiver_id[0] : receiver_id;
 
-    // --- 1. Cargar Historial de Mensajes ---
+    // 1. Cargar Historial de Mensajes
     useEffect(() => {
         if (!currentUser || !otherUserId) return;
-        navigation.setOptions({ title: receiver_name || 'Chat' });
+        navigation.setOptions({ title: receiver_name || `Chat con ID: ${otherUserId.slice(0, 8)}` });
 
         const fetchMessages = async () => {
             try {
@@ -43,7 +43,7 @@ export default function ConversationScreen() {
         fetchMessages();
     }, [currentUser, otherUserId, receiver_name, navigation]);
 
-    // --- 2. Suscribirse a Mensajes en Tiempo Real ---
+    // 2. Suscribirse a Mensajes en Tiempo Real
     useEffect(() => {
         if (!currentUser || !otherUserId) return;
 
@@ -59,11 +59,14 @@ export default function ConversationScreen() {
         return () => unsubscribe();
     }, [currentUser, otherUserId]);
 
-    // --- 3. Enviar un Mensaje Nuevo ---
+    // 3. Enviar un Mensaje Nuevo
     const handleSendMessage = async () => {
         if (newMessage.trim() === '' || !currentUser || !otherUserId) return;
+
         const messageContent = newMessage;
         setNewMessage('');
+        setEnviando(true);
+
         try {
             await messageRepository.sendMessage({
                 sender_id: currentUser.id,
@@ -73,10 +76,12 @@ export default function ConversationScreen() {
         } catch (error) {
             Alert.alert("Error", "No se pudo enviar el mensaje.");
             setNewMessage(messageContent);
+        } finally {
+            setEnviando(false);
         }
     };
 
-    // --- 4. Auto-scroll al final ---
+    // 4. Auto-scroll al final
     useEffect(() => {
         if (messages.length > 0) {
             setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
@@ -89,10 +94,12 @@ export default function ConversationScreen() {
     }
 
     return (
+        // <-- ESTRUCTURA DE CHAT PROBADA -->
         <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={chatStyles.chat_convoContainer}
-            keyboardVerticalOffset={100}
+            // El offset debe ser mayor que la altura del header + la tab bar
+            keyboardVerticalOffset={Platform.select({ ios: 90, default: 0 })}
         >
             <FlatList
                 ref={flatListRef}
@@ -115,17 +122,23 @@ export default function ConversationScreen() {
                         </Text>
                     </View>
                 )}
-                style={{ flex: 1, padding: 10 }}
+                style={{ flex: 1 }} // El FlatList debe crecer
+                contentContainerStyle={{ padding: 10 }}
             />
 
+            {/* Input para enviar mensaje (Usando la estructura del otro chat) */}
             <View style={chatStyles.chat_inputContainer}>
                 <TextInput
-                    style={[authStyles.input, { flex: 1, marginRight: 10 }]}
+                    style={[authStyles.input, { flex: 1, marginRight: 10, height: 40, marginBottom: 0 }]}
                     placeholder="Escribe un mensaje..."
                     value={newMessage}
                     onChangeText={setNewMessage}
                 />
-                <Button title="Enviar" onPress={handleSendMessage} />
+                <Button
+                    title={enviando ? "..." : "Enviar"}
+                    onPress={handleSendMessage}
+                    disabled={enviando || !newMessage.trim()}
+                />
             </View>
         </KeyboardAvoidingView>
     );

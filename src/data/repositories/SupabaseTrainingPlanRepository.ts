@@ -58,17 +58,13 @@ export class SupabaseTrainingPlanRepository implements ITrainingPlanRepository {
     async getAllUsers(): Promise<UserProfile[]> {
         const { data: users, error } = await supabase
             .from('profiles')
-            .select('id, username, full_name, role')
-            .eq('role', 'Usuario'); // Filtramos solo por 'Usuario'
+            // --- ESTO ES CLAVE: No debe haber filtro de rol ---
+            .select('id, username, full_name, role');
 
         if (error) {
             console.error("Error fetching users:", error.message);
             throw new Error(`Error al obtener los usuarios: ${error.message}`);
         }
-
-        // (Opcional) Si 'username' o 'full_name' son nulos, 
-        // podríamos querer usar el email de la tabla 'auth.users'
-        // pero eso complica la consulta. Por ahora, esto es suficiente.
 
         return users || [];
     }

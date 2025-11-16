@@ -114,7 +114,7 @@ export default function AssignPlanScreen() {
                         usersList.map((user) => (
                             <Picker.Item
                                 key={user.id}
-                                label={user.username || user.full_name || user.id}
+                                label={user.id}
                                 value={user.id}
                             />
                         ))

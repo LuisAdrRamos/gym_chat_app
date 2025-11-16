@@ -45,6 +45,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="assign-plan"
                 options={{
+                    title: 'Asignar Plan',
                     href: null,
                     headerShown: true,
                 }}

@@ -30,6 +30,7 @@ export const chatStyles = StyleSheet.create({
     chat_convoContainer: {
         flex: 1,
         backgroundColor: '#fff',
+        // <-- Agregamos flex: 1 para ocupar toda la pantalla
     },
     chat_inputContainer: {
         flexDirection: 'row',
@@ -37,6 +38,7 @@ export const chatStyles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#f0f0f0',
         backgroundColor: '#fff',
+        // <-- Aseguramos que el input se vea bien
     },
     chat_messageBubble: {
         padding: 12,
