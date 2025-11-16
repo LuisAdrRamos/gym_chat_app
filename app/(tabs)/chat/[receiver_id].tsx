@@ -6,7 +6,7 @@ import {
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useAuth } from '../../../src/presentation/context/AuthContext';
 import { chatStyles } from '../../../src/presentation/styles/chatStyles';
-import { authStyles } from '../../../src/presentation/styles/authStyles'; // Reusamos input style
+import { authStyles } from '../../../src/presentation/styles/authStyles';
 
 // Importaciones del Dominio y Datos del Chat
 import { Message } from '../../../src/domain/entities/Message';
@@ -24,13 +24,16 @@ export default function ConversationScreen() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
-    const [enviando, setEnviando] = useState(false); // Estado para el botón
+    const [enviando, setEnviando] = useState(false);
 
     const otherUserId = Array.isArray(receiver_id) ? receiver_id[0] : receiver_id;
 
-    // 1. Cargar Historial de Mensajes
+    // 1. Cargar Historial de Mensajes (sin cambios)
     useEffect(() => {
-        if (!currentUser || !otherUserId) return;
+        if (!currentUser || !otherUserId) {
+            setLoading(false);
+            return;
+        }
         navigation.setOptions({ title: receiver_name || `Chat con ID: ${otherUserId.slice(0, 8)}` });
 
         const fetchMessages = async () => {
@@ -43,7 +46,7 @@ export default function ConversationScreen() {
         fetchMessages();
     }, [currentUser, otherUserId, receiver_name, navigation]);
 
-    // 2. Suscribirse a Mensajes en Tiempo Real
+    // 2. Suscribirse a Mensajes en Tiempo Real (sin cambios)
     useEffect(() => {
         if (!currentUser || !otherUserId) return;
 
@@ -59,7 +62,7 @@ export default function ConversationScreen() {
         return () => unsubscribe();
     }, [currentUser, otherUserId]);
 
-    // 3. Enviar un Mensaje Nuevo
+    // 3. Enviar un Mensaje Nuevo (sin cambios)
     const handleSendMessage = async () => {
         if (newMessage.trim() === '' || !currentUser || !otherUserId) return;
 
@@ -81,7 +84,7 @@ export default function ConversationScreen() {
         }
     };
 
-    // 4. Auto-scroll al final
+    // 4. Auto-scroll al final (sin cambios)
     useEffect(() => {
         if (messages.length > 0) {
             setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
@@ -94,12 +97,12 @@ export default function ConversationScreen() {
     }
 
     return (
-        // <-- ESTRUCTURA DE CHAT PROBADA -->
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            // Forzamos padding en ambos, ya que es más estable para que el input no se esconda
+            behavior="padding"
             style={chatStyles.chat_convoContainer}
-            // El offset debe ser mayor que la altura del header + la tab bar
-            keyboardVerticalOffset={Platform.select({ ios: 90, default: 0 })}
+            // Offset de 90px es la altura del header + la altura de la TabBar
+            keyboardVerticalOffset={90}
         >
             <FlatList
                 ref={flatListRef}
@@ -123,13 +126,14 @@ export default function ConversationScreen() {
                     </View>
                 )}
                 style={{ flex: 1 }} // El FlatList debe crecer
-                contentContainerStyle={{ padding: 10 }}
+                contentContainerStyle={{ padding: 10, paddingBottom: 10 }}
             />
 
-            {/* Input para enviar mensaje (Usando la estructura del otro chat) */}
+            {/* Input para enviar mensaje */}
             <View style={chatStyles.chat_inputContainer}>
                 <TextInput
-                    style={[authStyles.input, { flex: 1, marginRight: 10, height: 40, marginBottom: 0 }]}
+                    // --- CORRECCIÓN AQUÍ: Usar chatStyles.chat_textInput directamente ---
+                    style={chatStyles.chat_textInput}
                     placeholder="Escribe un mensaje..."
                     value={newMessage}
                     onChangeText={setNewMessage}

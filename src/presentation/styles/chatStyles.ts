@@ -58,4 +58,18 @@ export const chatStyles = StyleSheet.create({
         fontSize: 16,
         color: 'black', // El color blanco para 'myMessage' se aplica en el .tsx
     },
+    chat_textInput: {
+        flex: 1,
+        marginRight: 10,
+        height: 40,
+        paddingHorizontal: 10,
+        paddingVertical: 8, // Añadido para mejor padding vertical
+        // Usamos un fondo y borde legible
+        backgroundColor: '#F5F5F5',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        marginBottom: 0, // Aseguramos que no haya margen inferior
+        fontSize: 16, // Aseguramos el tamaño
+    },
 });

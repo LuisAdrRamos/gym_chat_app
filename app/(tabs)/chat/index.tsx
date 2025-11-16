@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Pressable, Alert } from 'react-native';
 import { Link } from 'expo-router';
 import { useAuth } from '../../../src/presentation/context/AuthContext';
-// --- ¡NUEVA RUTA DE IMPORTACIÓN DE ESTILOS! ---
 import { chatStyles } from '../../../src/presentation/styles/chatStyles';
 
 // Reutilizamos el caso de uso que trae a todos los usuarios
@@ -22,18 +21,24 @@ export default function ChatListScreen() {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            if (!currentUser) return;
+            if (!currentUser) {
+                setLoading(false); // Detener loading si no hay usuario
+                return;
+            }
             try {
                 const allUsers = await getAllUsersCase.execute();
+
+                // Filtramos para no chatear con nosotros mismos
                 const otherUsers = allUsers.filter(u => u.id !== currentUser.id);
                 setUsers(otherUsers);
+
             } catch (error) {
-                Alert.alert("Error", "No se pudo cargar la lista de usuarios.");
+                Alert.alert("Error de Chat", "No se pudo cargar la lista de usuarios. Revisa la política RLS de 'profiles'.");
             }
             setLoading(false);
         };
         fetchUsers();
-    }, [currentUser]);
+    }, [currentUser]); // Depende del currentUser para asegurar que se ejecuta logueado
 
     if (loading) {
         return <ActivityIndicator style={{ marginTop: 50 }} size="large" />;
@@ -47,21 +52,21 @@ export default function ChatListScreen() {
                 renderItem={({ item }) => (
                     <Link
                         href={{
-                            // La ruta ahora es relativa, solo '[receiver_id]'
                             pathname: `./${item.id}`,
-                            params: { receiver_name: item.username || item.full_name || 'Usuario' }
+                            // Aseguramos que el nombre del usuario se pase correctamente
+                            params: { receiver_name: item.username || item.full_name || item.id }
                         }}
                         asChild
                     >
                         <Pressable style={chatStyles.chat_listItem}>
                             <Text style={chatStyles.chat_listName}>
-                                {item.username || item.full_name || 'Usuario sin nombre'}
+                                {item.username || item.full_name || `ID: ${item.id.slice(0, 8)}...`}
                             </Text>
                             <Text style={chatStyles.chat_listRole}>(Rol: {item.role})</Text>
                         </Pressable>
                     </Link>
                 )}
-                ListEmptyComponent={<Text>No se encontraron otros usuarios.</Text>}
+                ListEmptyComponent={<Text style={{ padding: 20 }}>No se encontraron otros usuarios. Crea otra cuenta para chatear.</Text>}
             />
         </View>
     );
