@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { User } from '@supabase/supabase-js';
+// --- CORRECCIÓN: Eliminar { MediaType } ---
 import * as ImagePicker from 'expo-image-picker';
 
 // Entidades y Repositorios
@@ -19,20 +20,16 @@ const progressRepository = new SupabaseProgressRepository();
 const storageRepository = new SupabaseStorageRepository();
 
 export function useUserDashboard(user: User) {
-    // Estados de Planes
+    // ... (Estados sin cambios) ...
     const [userPlans, setUserPlans] = useState<TrainingPlan[]>([]);
     const [isLoadingPlans, setIsLoadingPlans] = useState(false);
-
-    // Estados de Progreso
     const [progressList, setProgressList] = useState<Progress[]>([]);
     const [isLoadingProgress, setIsLoadingProgress] = useState(false);
     const [comment, setComment] = useState('');
     const [imageAsset, setImageAsset] = useState<ImagePicker.ImagePickerAsset | null>(null);
     const [isSubmittingProgress, setIsSubmittingProgress] = useState(false);
 
-    // --- LÓGICA DE DATOS ---
-
-    // Cargar Planes
+    // ... (fetchUserPlans y fetchProgress sin cambios) ...
     const fetchUserPlans = useCallback(async () => {
         if (user) {
             setIsLoadingPlans(true);
@@ -46,7 +43,6 @@ export function useUserDashboard(user: User) {
         }
     }, [user]);
 
-    // Cargar Progreso
     const fetchProgress = useCallback(async () => {
         if (user) {
             setIsLoadingProgress(true);
@@ -60,24 +56,34 @@ export function useUserDashboard(user: User) {
         }
     }, [user]);
 
-    // Efecto Principal
     useEffect(() => {
         fetchUserPlans();
         fetchProgress();
     }, [fetchUserPlans, fetchProgress]);
 
-    // --- HANDLERS DE PROGRESO ---
 
-    // Seleccionar Imagen
     const handlePickImage = async () => {
-        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        Alert.alert(
+            "Seleccionar Foto",
+            "¿Deseas tomar una foto nueva o elegir una de tu galería?",
+            [
+                { text: "Tomar Foto", onPress: () => launchCamera() },
+                { text: "Elegir de Galería", onPress: () => launchGallery() },
+                { text: "Cancelar", style: "cancel" },
+            ]
+        );
+    };
+
+    const launchCamera = async () => {
+        const permission = await ImagePicker.requestCameraPermissionsAsync();
         if (permission.granted === false) {
-            Alert.alert("Permiso denegado", "Se necesita acceso a la galería.");
+            Alert.alert("Permiso denegado", "Se necesita acceso a la cámara.");
             return;
         }
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        const result = await ImagePicker.launchCameraAsync({
+            // --- CORRECCIÓN: 'images' en minúscula ---
+            mediaTypes: 'images',
             allowsEditing: true,
             quality: 0.7,
             aspect: [4, 3],
@@ -88,7 +94,27 @@ export function useUserDashboard(user: User) {
         }
     };
 
-    // Subir Progreso
+    const launchGallery = async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permission.granted === false) {
+            Alert.alert("Permiso denegado", "Se necesita acceso a la galería.");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            // --- CORRECCIÓN: 'images' en minúscula ---
+            mediaTypes: 'images',
+            allowsEditing: true,
+            quality: 0.7,
+            aspect: [4, 3],
+        });
+
+        if (!result.canceled) {
+            setImageAsset(result.assets[0]);
+        }
+    };
+
+    // ... (handleSubmitProgress sin cambios) ...
     const handleSubmitProgress = async () => {
         if (!imageAsset || !comment) {
             Alert.alert("Error", "Por favor, añade una foto y un comentario.");
@@ -98,7 +124,6 @@ export function useUserDashboard(user: User) {
 
         setIsSubmittingProgress(true);
         try {
-            // 1. Subir imagen
             const fileUri = imageAsset.uri;
             const contentType = imageAsset.mimeType || "image/jpeg";
             const fileExt = fileUri.split('.').pop();
@@ -111,14 +136,12 @@ export function useUserDashboard(user: User) {
                 contentType
             );
 
-            // 2. Crear registro en DB
             const newProgress = await progressRepository.create({
                 usuario_id: user.id,
                 comentarios: comment,
                 foto_url: publicUrl,
             });
 
-            // 3. Actualizar UI
             setProgressList([newProgress, ...progressList]);
             setComment('');
             setImageAsset(null);
@@ -132,7 +155,6 @@ export function useUserDashboard(user: User) {
         }
     };
 
-    // Devolvemos todo lo que la UI necesita
     return {
         userPlans,
         isLoadingPlans,

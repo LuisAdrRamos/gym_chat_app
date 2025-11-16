@@ -48,7 +48,7 @@ export default function DashboardScreen() {
             ) : (
                 <>
                     <Text style={tabsStyles.index_title}>Bienvenido, {user?.email}</Text>
-                    <Text style={tabsStyles.index_roleText}>(Rol: {role})</Text>
+                    <Text style={tabsStyles.index_roleText}>{role}</Text>
                     {renderDashboard()}
                 </>
             )}

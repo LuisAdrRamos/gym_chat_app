@@ -10,7 +10,7 @@ export default function TabsLayout() {
                 tabBarActiveTintColor: '#007AFF',
             }}
         >
-            {/* (Tabs.Screen para 'index', 'chat', 'profile' sin cambios) */}
+            {/* --- PESTAÑAS VISIBLES --- */}
             <Tabs.Screen
                 name="index"
                 options={{
@@ -22,12 +22,13 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
-                name="chat" // <-- Esta es la lista de contactos
+                name="chat" // Carpeta /chat
                 options={{
                     title: 'Chat',
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="chatbubbles" size={size} color={color} />
                     ),
+                    headerShown: false,
                 }}
             />
             <Tabs.Screen
@@ -40,24 +41,32 @@ export default function TabsLayout() {
                 }}
             />
 
-            {/* (Screen de 'assign-plan' sin cambios) */}
+            {/* --- PANTALLAS Y CARPETAS OCULTAS --- */}
             <Tabs.Screen
                 name="assign-plan"
                 options={{
-                    title: 'Asignar Plan',
                     href: null,
                     headerShown: true,
                 }}
             />
-
-            {/* --- AÑADIR ESTA PANTALLA --- */}
-            {/* Esta es la pantalla de conversación específica */}
             <Tabs.Screen
-                name="chat/[receiver_id]" // Ruta dinámica
+                name="(components)/TrainerDashboard"
                 options={{
-                    title: 'Conversación',
-                    href: null, // Oculta del TabBar
-                    headerShown: true, // Muestra un header con botón de "atrás"
+                    href: null,
+                }}
+            />
+            <Tabs.Screen
+                name="(components)/UserDashboard"
+                options={{
+                    href: null,
+                }}
+            />
+
+            {/* --- AÑADE ESTA ENTRADA PARA CORREGIR EL TABBAR --- */}
+            <Tabs.Screen
+                name="(components)/RoutineVideoPlayer"
+                options={{
+                    href: null,
                 }}
             />
         </Tabs>

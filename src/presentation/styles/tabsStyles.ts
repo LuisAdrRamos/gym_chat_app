@@ -21,32 +21,44 @@ export const tabsStyles = StyleSheet.create({
     },
     index_contentTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
     index_divider: { height: 1, backgroundColor: '#ccc', marginVertical: 20 },
-    index_routineItem: {
+
+    // --- ESTILOS DE TARJETA DE RUTINA (ACTUALIZADOS) ---
+    index_routineItemCard: {
         backgroundColor: '#fff',
         padding: 12,
         borderRadius: 5,
         marginBottom: 10,
         borderWidth: 1,
         borderColor: '#ddd',
+    },
+    index_routineHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     index_routineInfo: {
-        flex: 1,
+        flex: 1, // Ocupa el espacio disponible
     },
     index_routineName: { fontWeight: 'bold', fontSize: 16 },
+    index_routineButtons: {
+        flexDirection: 'column',
+        marginLeft: 10, // Separación
+    },
     index_assignButton: {
         backgroundColor: '#007AFF',
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 5,
-        marginLeft: 10,
+        marginBottom: 5, // Espacio entre botones
+        alignItems: 'center', // Centrar texto
     },
     index_assignButtonText: {
         color: '#fff',
         fontWeight: 'bold',
+        fontSize: 12, // Tamaño más pequeño
     },
+    // --- (Fin de estilos actualizados) ---
+
     index_planItem: {
         backgroundColor: '#E6F7FF',
         padding: 12,
@@ -95,7 +107,7 @@ export const tabsStyles = StyleSheet.create({
     },
 
     // --- Estilos de TrainerDashboard ---
-    index_videoLink: {
+    index_videoLink: { // Este estilo ya no se usa, pero no hace daño
         color: 'green',
         fontStyle: 'italic',
         fontSize: 12,
@@ -106,6 +118,13 @@ export const tabsStyles = StyleSheet.create({
         fontStyle: 'italic',
         fontSize: 12,
         marginTop: 4,
+    },
+    index_videoPreview: {
+        width: '100%', // Ocupa el ancho del contenedor
+        height: 100,     // Altura fija
+        marginTop: 8,
+        borderRadius: 5,
+        backgroundColor: '#000', // Fondo negro mientras carga
     },
 
     // --- Estilos de UserDashboard ---
@@ -142,5 +161,4 @@ export const tabsStyles = StyleSheet.create({
         color: 'gray',
         marginTop: 4,
     },
-    // ¡Se han quitado todos los estilos 'chat_'!
 });

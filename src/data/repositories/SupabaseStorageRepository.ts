@@ -7,9 +7,6 @@ import {
 
 export class SupabaseStorageRepository implements IStorageRepository {
 
-    /**
-     * Sube un archivo (video, imagen) a un bucket de Supabase.
-     */
     async upload(
         bucket: string,
         filePath: string,
@@ -17,20 +14,16 @@ export class SupabaseStorageRepository implements IStorageRepository {
         contentType: string
     ): Promise<UploadResult> {
 
-        // FormData es la forma estándar de enviar archivos en React Native.
+        // FormData... (esto está bien)
         const formData = new FormData();
-        const fileName = filePath.split('/').pop() || 'file'; // Extrae 'video.mp4' de 'user_id/video.mp4'
-
-        // Añadimos el archivo al formulario.
-        // El 'as any' es necesario por diferencias de tipo entre RN y la web.
+        const fileName = filePath.split('/').pop() || 'file';
         formData.append('file', {
             uri: fileUri,
             name: fileName,
             type: contentType,
         } as any);
 
-        // 1. Subir el archivo
-        // Usamos 'upsert: true' para sobrescribir si ya existe un archivo con ese nombre.
+        // 1. Subir el archivo (esto está bien)
         const { data: uploadData, error: uploadError } = await supabase.storage
             .from(bucket)
             .upload(filePath, formData, {
@@ -41,23 +34,35 @@ export class SupabaseStorageRepository implements IStorageRepository {
             console.error("Error uploading file:", uploadError.message);
             throw new Error(`Error al subir el archivo: ${uploadError.message}`);
         }
-
         if (!uploadData) {
             throw new Error("No se recibió respuesta de Supabase Storage.");
         }
 
-        // 2. Obtener la URL pública del archivo recién subido
-        const { data: urlData } = supabase.storage
-            .from(bucket)
-            .getPublicUrl(uploadData.path);
+        // --- INICIO DE LA CORRECCIÓN ---
 
-        if (!urlData) {
-            throw new Error("No se pudo obtener la URL pública.");
+        // 2. Generar una URL firmada (Signed URL) para el archivo
+        // Esta es la forma correcta de acceder a archivos en buckets PRIVADOS.
+        // Damos una caducidad de 10 años (en segundos)
+        const expiresIn = 60 * 60 * 24 * 365 * 10;
+
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+            .from(bucket)
+            .createSignedUrl(uploadData.path, expiresIn); // <-- CAMBIO AQUÍ
+
+        if (signedUrlError) {
+            console.error("Error creating signed URL:", signedUrlError.message);
+            throw new Error(`Error al obtener la URL firmada: ${signedUrlError.message}`);
+        }
+
+        if (!signedUrlData) {
+            throw new Error("No se pudo obtener la URL firmada.");
         }
 
         return {
-            publicUrl: urlData.publicUrl,
-            path: uploadData.path, // Usaremos 'path' para guardar en la DB
+            publicUrl: signedUrlData.signedUrl, // <-- Devolvemos la URL firmada
+            path: uploadData.path,
         };
+
+        // --- FIN DE LA CORRECCIÓN ---
     }
 }
