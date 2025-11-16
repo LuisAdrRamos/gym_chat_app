@@ -2,7 +2,7 @@
 import { StyleSheet } from 'react-native';
 
 export const tabsStyles = StyleSheet.create({
-    // --- Estilos de app/(tabs)/index.tsx ---
+    // Estilos de app/(tabs)/index.tsx ---
     index_centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     index_container: { flex: 1, padding: 20 },
     index_title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center' },
@@ -57,17 +57,17 @@ export const tabsStyles = StyleSheet.create({
     },
     index_planName: { fontWeight: 'bold', fontSize: 16, color: '#005699' },
 
-    // --- Estilos de app/(tabs)/chat.tsx ---
+    // Estilos de app/(tabs)/chat.tsx ---
     chat_container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     chat_title: { fontSize: 20, fontWeight: 'bold' },
 
-    // --- Estilos de app/(tabs)/profile.tsx ---
+    // Estilos de app/(tabs)/profile.tsx ---
     profile_container: { flex: 1, padding: 20, paddingTop: 40 },
     profile_title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
     profile_info: { fontSize: 18, marginBottom: 10 },
     profile_buttonContainer: { marginTop: 30 },
 
-    // --- AÑADIR: Estilos de app/(tabs)/assign-plan.tsx ---
+    // Estilos de app/(tabs)/assign-plan.tsx ---
     assign_container: {
         flex: 1,
         padding: 20,
@@ -97,6 +97,7 @@ export const tabsStyles = StyleSheet.create({
         height: 50, // Requerido en iOS
         width: '100%',
     },
+
     // Estilos para el estado del video en TrainerDashboard ---
     index_videoLink: {
         color: 'green',
@@ -109,5 +110,40 @@ export const tabsStyles = StyleSheet.create({
         fontStyle: 'italic',
         fontSize: 12,
         marginTop: 4,
-    }
+    },
+
+    // Estilos para el Progreso del Usuario (UserDashboard) ---
+    user_progressImagePreview: {
+        width: 100,
+        height: 100,
+        borderRadius: 5,
+        marginVertical: 10,
+        alignSelf: 'center',
+    },
+    user_progressItem: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        alignItems: 'center',
+    },
+    user_progressImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 5,
+        marginRight: 10,
+    },
+    user_progressText: {
+        flex: 1,
+    },
+    user_progressComment: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    user_progressDate: {
+        fontSize: 12,
+        color: 'gray',
+        marginTop: 4,
+    },
 });
